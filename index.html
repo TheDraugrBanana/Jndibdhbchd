@@ -1,0 +1,1269 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The Foundation</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#050909;color:#00ffd5;font-family:Arial,sans-serif;text-align:center;overflow-x:hidden}
+
+h1{margin:15px 0 5px;letter-spacing:5px;text-shadow:0 0 15px #00ffd5}
+
+#game{display:block;margin:15px auto;width:min(95vw,700px);height:auto;background:#071313;border:3px solid #00a995;box-shadow:0 0 25px #00ffd555;touch-action:none}
+
+.stats{width:min(95vw,700px);margin:auto;display:flex;justify-content:space-between;gap:10px;font-weight:bold;flex-wrap:wrap}
+
+.bar{height:14px;background:#222;border:1px solid #00ffd5;margin:5px auto 12px;width:min(95vw,700px)}
+
+.fill{height:100%;background:#00ffd5;width:100%}
+
+#bossBar{background:#ff174f}
+
+#message{min-height:35px;margin:10px;padding:5px}
+
+button{background:#062522;color:#00ffd5;border:2px solid #00ffd5;padding:12px 20px;border-radius:8px;font-weight:bold;cursor:pointer}
+
+button:active{background:#00ffd5;color:#00110e}
+
+.controls{display:grid;grid-template-columns:repeat(3,60px);gap:7px;justify-content:center;margin:12px auto}
+
+.controls button{padding:12px 0;font-size:20px}
+
+#strike{display:none;margin:10px auto}
+
+#gameScreen{display:none}
+
+#startScreen,#endScreen,#storyScreen{
+
+ min-height:100vh;flex-direction:column;
+
+ align-items:center;justify-content:center;padding:20px;
+
+ background:radial-gradient(ellipse at center,#10312d 0%,#050909 70%);
+
+}
+
+#startScreen{display:flex}
+
+#endScreen,#storyScreen{display:none}
+
+#startScreen h1,#endScreen h1,#storyScreen h1{font-size:clamp(38px,9vw,75px);margin:0 0 12px}
+
+#startScreen p,#endScreen p{letter-spacing:4px;color:#9affed;margin:8px 0 35px}
+
+#startButton,#youtubeButton,#playAgainButton,#continueButton{
+
+ font-size:20px;padding:16px 42px;box-shadow:0 0 22px #00ffd566;margin:10px;
+
+}
+
+#youtubeButton{display:inline-block;text-decoration:none;background:#ff174f;color:white;border:2px solid #ff174f;border-radius:8px;font-weight:bold}
+
+.startControls{margin-top:35px;line-height:2;color:#85bdb5}
+
+#endScreen h1{color:#00ffd5;text-shadow:0 0 25px #00ffd5}
+
+.victoryText{color:#fff;letter-spacing:2px;margin:15px 0 30px}
+
+.storyBox{
+
+ width:min(90vw,650px);padding:30px 24px;
+
+ border:2px solid #00ffd5;border-radius:12px;
+
+ background:#071313;box-shadow:0 0 25px #00ffd544;
+
+ margin:20px auto;
+
+}
+
+#storyChapter{color:#ff174f;letter-spacing:4px;font-size:14px}
+
+#storyText{font-size:19px;line-height:1.8;color:#d8fffa;min-height:130px}
+
+#storySpeaker{color:#00ffd5;font-weight:bold;letter-spacing:2px;margin:18px}
+
+#phaseText{color:#ff315d}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="startScreen">
+
+ <h1>THE FOUNDATION</h1>
+
+ <p>FACE THE FOUNDER</p>
+
+ <button id="startButton">START GAME</button>
+
+ <div class="startControls">
+
+  <strong>CONTROLS</strong><br>
+
+  WASD / ARROW KEYS TO MOVE<br>
+
+  DODGE THE FOUNDER'S ATTACKS<br>
+
+  SPACE OR STRIKE BUTTON TO ATTACK
+
+ </div>
+
+</div>
+
+<div id="storyScreen">
+
+ <div class="storyBox">
+
+  <div id="storyChapter">CHAPTER 1</div>
+
+  <h1 id="storyTitle">THE ARRIVAL</h1>
+
+  <div id="storySpeaker">NARRATOR</div>
+
+  <div id="storyText"></div>
+
+  <button id="continueButton">CONTINUE</button>
+
+ </div>
+
+</div>
+
+<div id="endScreen">
+
+ <h1>THE FOUNDER HAS FALLEN!</h1>
+
+ <p>YOU HAVE DEFEATED THE FOUNDATION</p>
+
+ <div class="victoryText">CONGRATULATIONS, YOU WIN!</div>
+
+ <a id="youtubeButton" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">WATCH YOUTUBE</a>
+
+ <br>
+
+ <button id="playAgainButton">PLAY AGAIN</button>
+
+</div>
+
+<div id="gameScreen">
+
+<h1>THE FOUNDATION</h1>
+
+<p>FACE THE FOUNDER</p>
+
+<div class="stats">
+
+<span>PLAYER HP: <span id="playerText">100</span></span>
+
+<span>FOUNDER HP: <span id="bossText">500</span></span>
+
+<span>PHASE: <span id="phaseText">1</span></span>
+
+</div>
+
+<div class="bar"><div class="fill" id="playerBar"></div></div>
+
+<div class="bar" style="border-color:#ff174f">
+
+<div class="fill" id="bossBar"></div>
+
+</div>
+
+<canvas id="game" width="700" height="430"></canvas>
+
+<div id="message">Dodge every attack to earn your chance to strike!</div>
+
+<div class="controls">
+
+<span></span><button id="up">▲</button><span></span>
+
+<button id="left">◀</button>
+
+<button id="down">▼</button>
+
+<button id="right">▶</button>
+
+</div>
+
+<button id="strike">STRIKE</button>
+
+<button id="restart">RESTART</button>
+
+</div>
+
+<script>
+
+const canvas=document.getElementById("game");
+
+const ctx=canvas.getContext("2d");
+
+const W=canvas.width,H=canvas.height;
+
+const keys={};
+
+let player={x:350,y:340,r:8,hp:100,speed:3.5};
+
+let boss={hp:500,x:350,y:65};
+
+let bullets=[];
+
+let phase="dodge";
+
+let battlePhase=1;
+
+let bossMaxHp=500;
+
+let pattern=0;
+
+let attackTimer=0;
+
+let needle=0;
+
+let needleDir=1;
+
+let gameOver=false;
+
+let invulnerable=0;
+
+let waveTimer=0;
+
+let wavesRemaining=0;
+
+let attackHit=false;
+
+let nextAttackDelay=0;
+
+let aimedShots=0;
+
+let currentWave=0;
+
+let gameStarted=false;
+
+const playerText=document.getElementById("playerText");
+
+const bossText=document.getElementById("bossText");
+
+const playerBar=document.getElementById("playerBar");
+
+const bossBar=document.getElementById("bossBar");
+
+const phaseText=document.getElementById("phaseText");
+
+const message=document.getElementById("message");
+
+const strike=document.getElementById("strike");
+
+const storyScenes=[
+
+ {
+
+  chapter:"CHAPTER 1",
+
+  title:"THE ARRIVAL",
+
+  speaker:"NARRATOR",
+
+  text:"You wake up in a strange place. The walls glow with a mysterious teal light. A giant structure stands before you. Above the entrance, two words are written: THE FOUNDATION. You step inside."
+
+ },
+
+ {
+
+  chapter:"CHAPTER 2",
+
+  title:"THE WARNING",
+
+  speaker:"UNKNOWN VOICE",
+
+  text:"\"So... another one has found their way in. You don't understand what this place is. The Foundation was built to keep everything under control. And I am the one who controls it.\""
+
+ },
+
+ {
+
+  chapter:"CHAPTER 3",
+
+  title:"THE FOUNDER",
+
+  speaker:"THE FOUNDER",
+
+  text:"\"I created this place. Every wall, every system, every rule. You think you can destroy everything I've built? I've defeated everyone who tried. You will be no different.\""
+
+ },
+
+ {
+
+  chapter:"CHAPTER 4",
+
+  title:"NO TURNING BACK",
+
+  speaker:"NARRATOR",
+
+  text:"The doors slam shut behind you. The Founder rises from the shadows. Red energy begins to gather around him. There is no escape now. You must survive."
+
+ },
+
+ {
+
+  chapter:"FINAL CHAPTER",
+
+  title:"THE LAST STAND",
+
+  speaker:"THE FOUNDER",
+
+  text:"\"ENOUGH TALK. SHOW ME WHAT YOU CAN DO!\""
+
+ }
+
+];
+
+let storyIndex=0;
+
+function showStory(){
+
+ document.getElementById("startScreen").style.display="none";
+
+ document.getElementById("gameScreen").style.display="none";
+
+ document.getElementById("endScreen").style.display="none";
+
+ document.getElementById("storyScreen").style.display="flex";
+
+ storyIndex=0;
+
+ displayStory();
+
+}
+
+function displayStory(){
+
+ const scene=storyScenes[storyIndex];
+
+ document.getElementById("storyChapter").textContent=scene.chapter;
+
+ document.getElementById("storyTitle").textContent=scene.title;
+
+ document.getElementById("storySpeaker").textContent=scene.speaker;
+
+ document.getElementById("storyText").textContent=scene.text;
+
+ document.getElementById("continueButton").textContent=
+
+  storyIndex===storyScenes.length-1?"BEGIN BATTLE":"CONTINUE";
+
+}
+
+function nextStory(){
+
+ storyIndex++;
+
+ if(storyIndex>=storyScenes.length){
+
+  document.getElementById("storyScreen").style.display="none";
+
+  beginBattle();
+
+ }else{
+
+  displayStory();
+
+ }
+
+}
+
+document.getElementById("continueButton").addEventListener("click",nextStory);
+
+function updateUI(){
+
+ playerText.textContent=Math.max(0,Math.ceil(player.hp));
+
+ bossText.textContent=Math.max(0,Math.ceil(boss.hp));
+
+ playerBar.style.width=Math.max(0,player.hp)+"%";
+
+ bossBar.style.width=Math.max(0,boss.hp/bossMaxHp*100)+"%";
+
+ phaseText.textContent=battlePhase;
+
+}
+
+function drawHeart(x,y){
+
+ ctx.save();
+
+ ctx.translate(x,y);
+
+ ctx.fillStyle="#00ffd5";
+
+ ctx.shadowColor="#00ffd5";
+
+ ctx.shadowBlur=15;
+
+ ctx.beginPath();
+
+ ctx.moveTo(0,8);
+
+ ctx.bezierCurveTo(-24,-7,-12,-20,0,-9);
+
+ ctx.bezierCurveTo(12,-20,24,-7,0,8);
+
+ ctx.fill();
+
+ ctx.restore();
+
+}
+
+function drawBoss(){
+
+ ctx.save();
+
+ ctx.translate(boss.x,boss.y);
+
+ const bossColor=battlePhase===2?"#ff174f":"#00ffd5";
+
+ const bossFill=battlePhase===2?"#50091d":"#063e39";
+
+ ctx.shadowColor=bossColor;
+
+ ctx.shadowBlur=battlePhase===2?35:20;
+
+ ctx.fillStyle=bossFill;
+
+ ctx.strokeStyle=bossColor;
+
+ ctx.lineWidth=3;
+
+ ctx.beginPath();
+
+ ctx.moveTo(-65,-20);
+
+ ctx.lineTo(-40,-45);
+
+ ctx.lineTo(-25,-28);
+
+ ctx.lineTo(0,-42);
+
+ ctx.lineTo(25,-28);
+
+ ctx.lineTo(45,-45);
+
+ ctx.lineTo(65,-15);
+
+ ctx.lineTo(48,20);
+
+ ctx.lineTo(0,35);
+
+ ctx.lineTo(-48,20);
+
+ ctx.closePath();
+
+ ctx.fill();
+
+ ctx.stroke();
+
+ ctx.fillStyle="#ff315d";
+
+ ctx.fillRect(-27,-10,12,8);
+
+ ctx.fillRect(15,-10,12,8);
+
+ ctx.fillStyle=bossColor;
+
+ ctx.font="bold 18px Arial";
+
+ ctx.textAlign="center";
+
+ ctx.fillText(battlePhase===2?"THE FOUNDER - ENRAGED":"THE FOUNDER",0,58);
+
+ ctx.restore();
+
+}
+
+function spawnBullet(x,y,vx,vy,size=9,homing=false){
+
+ bullets.push({x,y,vx,vy,size,homing,speed:9});
+
+}
+
+function aimedAttack(){
+
+ aimedShots=battlePhase===2?5:3;
+
+ fireAimedShot();
+
+}
+
+function fireAimedShot(){
+
+ const dx=player.x-boss.x;
+
+ const dy=player.y-boss.y;
+
+ const len=Math.hypot(dx,dy)||1;
+
+ const speed=battlePhase===2?11:9;
+
+ spawnBullet(boss.x,boss.y+25,dx/len*speed,dy/len*speed,11,true);
+
+ aimedShots--;
+
+}
+
+function spreadAttack(){
+
+ const count=battlePhase===2?19:15;
+
+ const speed=battlePhase===2?7.5:6.5;
+
+ const rotation=(currentWave-(battlePhase===2?4:3))*0.045;
+
+ const maxAngle=battlePhase===2?1.48:1.38;
+
+ for(let i=0;i<count;i++){
+
+  const t=i/(count-1);
+
+  const angle=-maxAngle+(t*maxAngle*2)+rotation;
+
+  const vx=Math.sin(angle)*speed;
+
+  const vy=Math.cos(angle)*speed;
+
+  spawnBullet(W/2,105,vx,vy,8);
+
+ }
+
+}
+
+function startSpreadWaves(){
+
+ wavesRemaining=battlePhase===2?7:5;
+
+ waveTimer=0;
+
+ currentWave=0;
+
+ fireSpreadWave();
+
+}
+
+function fireSpreadWave(){
+
+ currentWave++;
+
+ spreadAttack();
+
+ wavesRemaining--;
+
+}
+
+function rainAttack(){
+
+ const count=battlePhase===2?14:9;
+
+ for(let i=0;i<count;i++){
+
+  spawnBullet(
+
+   20+Math.random()*(W-40),
+
+   0,
+
+   (Math.random()-.5)*(battlePhase===2?3:2),
+
+   (battlePhase===2?8:6)+Math.random()*(battlePhase===2?3:2),
+
+   9
+
+  );
+
+ }
+
+}
+
+function wallAttack(){
+
+ const gap=Math.floor(Math.random()*6);
+
+ for(let i=0;i<7;i++){
+
+  if(i!==gap&&i!==gap+1){
+
+   spawnBullet(i*100+40,0,0,battlePhase===2?9:7,10);
+
+  }
+
+ }
+
+}
+
+function sweepAttack(){
+
+ const count=battlePhase===2?12:9;
+
+ for(let i=0;i<count;i++){
+
+  spawnBullet(i*(W/count)+30,0,0,battlePhase===2?8:6.5,10);
+
+ }
+
+}
+
+const patterns=[aimedAttack,startSpreadWaves,rainAttack,wallAttack,sweepAttack];
+
+function startPattern(){
+
+ bullets=[];
+
+ attackHit=false;
+
+ wavesRemaining=0;
+
+ waveTimer=0;
+
+ attackTimer=0;
+
+ aimedShots=0;
+
+ patterns[pattern%patterns.length]();
+
+ pattern++;
+
+ phase="dodge";
+
+ if(battlePhase===2){
+
+  message.textContent="PHASE 2: THE FOUNDER IS ENRAGED!";
+
+ }else{
+
+  message.textContent="DODGE EVERY FIREBALL!";
+
+ }
+
+ if(pattern%5===2)message.textContent="FIVE-WAVE RADIAL FAN!";
+
+ if(pattern%5===1)message.textContent="THREE RAPID HEAT-SEEKING SHOTS!";
+
+ if(battlePhase===2){
+
+  if(pattern%5===2)message.textContent="SEVEN-WAVE ENRAGED RADIAL FAN!";
+
+  if(pattern%5===1)message.textContent="FIVE RAPID HEAT-SEEKING FIREBALLS!";
+
+ }
+
+}
+
+function startTiming(){
+
+ if(attackHit)return;
+
+ phase="timing";
+
+ bullets=[];
+
+ needle=0;
+
+ needleDir=1;
+
+ strike.style.display="inline-block";
+
+ message.textContent="PERFECT DODGE! YOUR CHANCE TO STRIKE!";
+
+}
+
+function startSecondPhase(){
+
+ battlePhase=2;
+
+ bossMaxHp=700;
+
+ boss.hp=bossMaxHp;
+
+ // Fully heal the player after Phase 1
+
+ player.hp=100;
+
+ bullets=[];
+
+ pattern=0;
+
+ attackTimer=0;
+
+ wavesRemaining=0;
+
+ waveTimer=0;
+
+ aimedShots=0;
+
+ currentWave=0;
+
+ attackHit=false;
+
+ invulnerable=100;
+
+ phase="between";
+
+ nextAttackDelay=120;
+
+ strike.style.display="none";
+
+ updateUI();
+
+ message.textContent="THE FOUNDER HAS AWAKENED! PHASE 2 BEGINS!";
+
+}
+
+function showVictory(){
+
+ gameOver=true;
+
+ phase="win";
+
+ strike.style.display="none";
+
+ document.getElementById("gameScreen").style.display="none";
+
+ document.getElementById("endScreen").style.display="flex";
+
+}
+
+function attackBoss(){
+
+ if(phase!=="timing"||gameOver)return;
+
+ const accuracy=1-Math.abs(needle-.5)*2;
+
+ const damage=Math.round(10+accuracy*30);
+
+ boss.hp=Math.max(0,boss.hp-damage);
+
+ updateUI();
+
+ strike.style.display="none";
+
+ if(boss.hp<=0){
+
+  if(battlePhase===1){
+
+   startSecondPhase();
+
+  }else{
+
+   showVictory();
+
+  }
+
+ }else{
+
+  phase="between";
+
+  message.textContent="DIRECT HIT! PREPARE FOR THE NEXT ATTACK!";
+
+  nextAttackDelay=35;
+
+ }
+
+}
+
+strike.addEventListener("click",attackBoss);
+
+document.addEventListener("keydown",e=>{
+
+ keys[e.key.toLowerCase()]=true;
+
+ if(e.code==="Space"){
+
+  e.preventDefault();
+
+  attackBoss();
+
+ }
+
+});
+
+document.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+
+function bindButton(id,key){
+
+ const button=document.getElementById(id);
+
+ button.addEventListener("pointerdown",e=>{
+
+  e.preventDefault();
+
+  keys[key]=true;
+
+ });
+
+ button.addEventListener("pointerup",e=>{
+
+  e.preventDefault();
+
+  keys[key]=false;
+
+ });
+
+ button.addEventListener("pointerleave",()=>keys[key]=false);
+
+ button.addEventListener("pointercancel",()=>keys[key]=false);
+
+}
+
+bindButton("up","arrowup");
+
+bindButton("down","arrowdown");
+
+bindButton("left","arrowleft");
+
+bindButton("right","arrowright");
+
+function movePlayer(){
+
+ if(phase!=="dodge")return;
+
+ let dx=0,dy=0;
+
+ if(keys.arrowleft||keys.a)dx--;
+
+ if(keys.arrowright||keys.d)dx++;
+
+ if(keys.arrowup||keys.w)dy--;
+
+ if(keys.arrowdown||keys.s)dy++;
+
+ const len=Math.hypot(dx,dy)||1;
+
+ player.x+=dx/len*player.speed;
+
+ player.y+=dy/len*player.speed;
+
+ player.x=Math.max(25,Math.min(W-25,player.x));
+
+ player.y=Math.max(115,Math.min(H-25,player.y));
+
+}
+
+function updateBullets(){
+
+ bullets.forEach(b=>{
+
+  if(b.homing){
+
+   const dx=player.x-b.x;
+
+   const dy=player.y-b.y;
+
+   const len=Math.hypot(dx,dy)||1;
+
+   const targetVX=dx/len*b.speed;
+
+   const targetVY=dy/len*b.speed;
+
+   b.vx+=(targetVX-b.vx)*0.035;
+
+   b.vy+=(targetVY-b.vy)*0.035;
+
+   const currentSpeed=Math.hypot(b.vx,b.vy)||1;
+
+   b.vx=b.vx/currentSpeed*b.speed;
+
+   b.vy=b.vy/currentSpeed*b.speed;
+
+  }
+
+  b.x+=b.vx;
+
+  b.y+=b.vy;
+
+  if(!attackHit&&invulnerable<=0&&
+
+     Math.hypot(b.x-player.x,b.y-player.y)<b.size+player.r){
+
+   attackHit=true;
+
+   player.hp-=10;
+
+   invulnerable=45;
+
+   wavesRemaining=0;
+
+   waveTimer=0;
+
+   attackTimer=0;
+
+   phase="failed";
+
+   strike.style.display="none";
+
+   b.x=-1000;
+
+   updateUI();
+
+   if(player.hp<=0){
+
+    player.hp=0;
+
+    gameOver=true;
+
+    phase="lose";
+
+    message.textContent="YOU HAVE BEEN DEFEATED.";
+
+   }else{
+
+    message.textContent="YOU GOT HIT! NO ATTACK CHANCE!";
+
+   }
+
+  }
+
+ });
+
+ bullets=bullets.filter(b=>b.x>-40&&b.x<W+40&&b.y>-40&&b.y<H+40);
+
+}
+
+function drawBullets(){
+
+ bullets.forEach(b=>{
+
+  ctx.save();
+
+  ctx.fillStyle=b.homing?"#ff174f":"#ff553d";
+
+  ctx.shadowColor=b.homing?"#ff174f":"#ff351f";
+
+  ctx.shadowBlur=b.homing?22:15;
+
+  ctx.beginPath();
+
+  ctx.arc(b.x,b.y,b.size,0,Math.PI*2);
+
+  ctx.fill();
+
+  ctx.restore();
+
+ });
+
+}
+
+function drawArena(){
+
+ ctx.clearRect(0,0,W,H);
+
+ ctx.strokeStyle=battlePhase===2?"#ff174f":"#12665e";
+
+ ctx.lineWidth=2;
+
+ ctx.strokeRect(10,10,W-20,H-20);
+
+ ctx.strokeStyle=battlePhase===2?"#49101e":"#0b2926";
+
+ ctx.lineWidth=1;
+
+ for(let x=35;x<W;x+=35){
+
+  ctx.beginPath();
+
+  ctx.moveTo(x,100);
+
+  ctx.lineTo(x,H-15);
+
+  ctx.stroke();
+
+ }
+
+ for(let y=120;y<H;y+=35){
+
+  ctx.beginPath();
+
+  ctx.moveTo(15,y);
+
+  ctx.lineTo(W-15,y);
+
+  ctx.stroke();
+
+ }
+
+ drawBoss();
+
+ drawBullets();
+
+ if(invulnerable<=0||Math.floor(invulnerable/5)%2===0){
+
+  drawHeart(player.x,player.y);
+
+ }
+
+ if(phase==="timing"){
+
+  ctx.fillStyle="#062b27";
+
+  ctx.fillRect(150,200,400,45);
+
+  ctx.strokeStyle="#00ffd5";
+
+  ctx.strokeRect(150,200,400,45);
+
+  ctx.fillStyle="#00ffd5";
+
+  ctx.fillRect(340,200,20,45);
+
+  ctx.fillStyle="#fff";
+
+  ctx.fillRect(150+needle*400-3,190,6,65);
+
+  ctx.fillStyle="#00ffd5";
+
+  ctx.font="14px Arial";
+
+  ctx.textAlign="center";
+
+  ctx.fillText("TIMING BAR",350,175);
+
+ }
+
+}
+
+function update(){
+
+ if(gameOver)return;
+
+ if(invulnerable>0)invulnerable--;
+
+ if(phase==="dodge"){
+
+  movePlayer();
+
+  updateBullets();
+
+  if(phase!=="dodge")return;
+
+  if(wavesRemaining>0){
+
+   waveTimer++;
+
+   const interval=battlePhase===2?22:28;
+
+   if(waveTimer>=interval){
+
+    waveTimer=0;
+
+    fireSpreadWave();
+
+   }
+
+  }
+
+  if(aimedShots>0&&bullets.length===0){
+
+   waveTimer++;
+
+   const interval=battlePhase===2?9:12;
+
+   if(waveTimer>=interval){
+
+    waveTimer=0;
+
+    fireAimedShot();
+
+   }
+
+  }
+
+  if(bullets.length===0&&wavesRemaining===0&&aimedShots===0){
+
+   attackTimer++;
+
+   if(attackTimer>18){
+
+    attackTimer=0;
+
+    startTiming();
+
+   }
+
+  }else{
+
+   attackTimer=0;
+
+  }
+
+ }
+
+ if(phase==="failed"){
+
+  nextAttackDelay++;
+
+  if(nextAttackDelay>35){
+
+   nextAttackDelay=0;
+
+   startPattern();
+
+  }
+
+ }
+
+ if(phase==="between"){
+
+  nextAttackDelay--;
+
+  if(nextAttackDelay<=0)startPattern();
+
+ }
+
+ if(phase==="timing"){
+
+  needle+=.016*needleDir;
+
+  if(needle>=1){needle=1;needleDir=-1}
+
+  if(needle<=0){needle=0;needleDir=1}
+
+ }
+
+}
+
+function loop(){
+
+ if(!gameStarted)return;
+
+ update();
+
+ drawArena();
+
+ if(!gameOver)requestAnimationFrame(loop);
+
+}
+
+function beginBattle(){
+
+ gameStarted=true;
+
+ gameOver=false;
+
+ document.getElementById("storyScreen").style.display="none";
+
+ document.getElementById("endScreen").style.display="none";
+
+ document.getElementById("gameScreen").style.display="block";
+
+ player={x:350,y:340,r:8,hp:100,speed:3.5};
+
+ boss={hp:500,x:350,y:65};
+
+ bullets=[];
+
+ phase="dodge";
+
+ battlePhase=1;
+
+ bossMaxHp=500;
+
+ pattern=0;
+
+ attackTimer=0;
+
+ invulnerable=0;
+
+ wavesRemaining=0;
+
+ waveTimer=0;
+
+ attackHit=false;
+
+ nextAttackDelay=0;
+
+ aimedShots=0;
+
+ currentWave=0;
+
+ strike.style.display="none";
+
+ updateUI();
+
+ startPattern();
+
+ loop();
+
+}
+
+function startGame(){
+
+ showStory();
+
+}
+
+document.getElementById("startButton").addEventListener("click",startGame);
+
+document.getElementById("playAgainButton").addEventListener("click",startGame);
+
+document.getElementById("restart").addEventListener("click",()=>{
+
+ const wasGameOver=gameOver;
+
+ player={x:350,y:340,r:8,hp:100,speed:3.5};
+
+ boss={hp:500,x:350,y:65};
+
+ bullets=[];
+
+ phase="dodge";
+
+ battlePhase=1;
+
+ bossMaxHp=500;
+
+ pattern=0;
+
+ attackTimer=0;
+
+ gameOver=false;
+
+ invulnerable=0;
+
+ wavesRemaining=0;
+
+ waveTimer=0;
+
+ attackHit=false;
+
+ nextAttackDelay=0;
+
+ aimedShots=0;
+
+ currentWave=0;
+
+ strike.style.display="none";
+
+ updateUI();
+
+ startPattern();
+
+ if(wasGameOver)loop();
+
+});
+
+updateUI();
+
+</script>
+
+</body>
+
+</html>
